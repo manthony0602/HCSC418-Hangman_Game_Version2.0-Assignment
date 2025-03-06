@@ -88,5 +88,5 @@ This project is a **React-based Hangman Game** where users guess a randomly sele
 
 ## Application Screenshot
 
-![Hangman Assignment ("Hangman Game" Homework) Screenshot](hangmanImg.jpg)
+![Hangman Assignment ("Hangman Game" Homework) Screenshot](public/hangmanImg.jpg)
 
