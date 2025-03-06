@@ -59,36 +59,32 @@ This project is a **React-based Hangman Game** where users guess a randomly sele
    ````sh
    git clone https://github.com/your-username/react-parent-child-demo.git
    cd react-parent-child-demo
-
-   2. **Navigate to the Project Folder**:
-
-   ```bash
-   cd your-repo-name
    ````
 
-   2. **Navigate to the Project Folder**:
+2. **Navigate to the Project Folder**:
 
    ```bash
    cd your-repo-name
    ```
 
-2. **Install Dependencies**:
+3. **Install Dependencies**:
 
    ```bash
    npm install
    ```
 
-3. **Start the Development Server**:
+4. **Start the Development Server**:
 
    ```bash
    npm start
    ```
 
-4. **Open the Application**:
+5. **Open the Application**:
    ```bash
    The app will open automatically in your browser at http://localhost:3000
    If it doesnt, manually navigate to http://localhost:3000
    ```
 
 ## Application Screenshot
-
+![Hangman Assignment ("Hangman Game" Homework) Screenshot](<img width="1247" alt="image" src="https://github.com/user-attachments/assets/6f964c11-3283-4e5f-b7f2-07eef3ffe703" />
+)
