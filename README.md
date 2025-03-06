@@ -88,4 +88,4 @@ This project is a **React-based Hangman Game** where users guess a randomly sele
 
 ## Application Screenshot
 
-![Hangman Assignment ("Hangman Game" Homework) Screenshot](<img width="1247" alt="image" src="hangmanImg.jpg" />)
+
