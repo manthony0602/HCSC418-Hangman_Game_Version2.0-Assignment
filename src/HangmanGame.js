@@ -1,7 +1,14 @@
+// src/HangmanGame.js
 import './App.css';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import SingleLetterSearchbar from './SingleLetterSearchBar';
 import LetterBox from './LetterBox';
+import {
+  initializeGame,
+  processGuess,
+  MAX_LIVES,
+} from './logicTest/hangmanLogic'; // update path if needed
+import axios from 'axios';
 
 const pics = [
   '/firstImg.png',
@@ -10,7 +17,7 @@ const pics = [
   '/fourthImg.png',
   '/fifthImg.png',
   '/sixthImg.png',
-  '/seventhImg.png', // Last image, should match max incorrect guesses (6)
+  '/seventhImg.png',
 ];
 
 const words = [
@@ -24,113 +31,132 @@ const words = [
   'React',
 ];
 
-class HangmanGame extends React.Component {
-  state = {
-    curWord: '',
-    maskedWord: [],
-    usedLetters: [],
-    wrongLetters: [], // Stores incorrect guesses
-    lifeLeft: 0, // Starts at 0, max mistakes = 6
-    gameOver: false,
-    gameWon: false,
+function HangmanGame() {
+  const [gameState, setGameState] = useState(initializeGame(''));
+  const [playerName, setPlayerName] = useState('');
+
+  const startNewGame = () => {
+    const newWord = words[Math.floor(Math.random() * words.length)];
+    const newGameState = initializeGame(newWord);
+    setGameState(newGameState);
   };
 
-  componentDidMount() {
-    this.startNewGame();
-  }
+  const handleGuess = (letter) => {
+    if (
+      gameState.gameOver ||
+      gameState.gameWon ||
+      gameState.usedLetters.includes(letter)
+    )
+      return;
 
-  startNewGame = () => {
-    const newWord =
-      words[Math.floor(Math.random() * words.length)].toUpperCase();
-
-    this.setState({
-      curWord: newWord,
-      maskedWord: Array(newWord.length).fill('_'), // Hide all letters
-      usedLetters: [],
-      wrongLetters: [], // Reset wrong guesses
-      lifeLeft: 0,
-      gameOver: false,
-      gameWon: false,
-    });
+    const updatedState = processGuess(gameState, letter);
+    setGameState(updatedState);
   };
 
-  handleGuess = (letter) => {
-    if (this.state.gameOver || this.state.usedLetters.includes(letter)) return;
+  useEffect(() => {
+    if ((gameState.gameOver || gameState.gameWon) && playerName) {
+      axios
+        .post('http://localhost:5000/record', {
+          name: playerName,
+          didWin: gameState.gameWon,
+        })
+        .then(() => {
+          console.log('✔️ Result saved to DB');
+        })
+        .catch((err) => {
+          console.error('Error saving result:', err);
+        });
+    }
+  }, [gameState.gameOver, gameState.gameWon, playerName]);
 
-    this.setState((prevState) => {
-      const usedLetters = [...prevState.usedLetters, letter];
-      let maskedWord = [...prevState.maskedWord];
-      let lifeLeft = prevState.lifeLeft;
-      let wrongLetters = [...prevState.wrongLetters];
+  useEffect(() => {
+    startNewGame();
+  }, []);
 
-      // Check if letter is in the word
-      if (prevState.curWord.includes(letter)) {
-        for (let i = 0; i < prevState.curWord.length; i++) {
-          if (prevState.curWord[i] === letter) {
-            maskedWord[i] = letter;
-          }
-        }
-      } else {
-        lifeLeft += 1; // Reduce life on incorrect guess
-        wrongLetters.push(letter); // Add incorrect letter to wrongLetters array
-      }
+  return (
+    <div className="game-container">
+      <h1>Hangman Game</h1>
 
-      const gameOver = lifeLeft >= pics.length - 1; // Game over after max incorrect guesses (6)
-      const gameWon = !maskedWord.includes('_'); // Win when no underscores remain
+      <img
+        src={pics[Math.min(gameState.lifeLeft, pics.length - 1)]}
+        alt="Hangman"
+        className="hangman-image"
+      />
 
-      return {
-        usedLetters,
-        maskedWord,
-        lifeLeft,
-        wrongLetters,
-        gameOver,
-        gameWon,
-      };
-    });
-  };
-
-  render() {
-    return (
-      <div className="game-container">
-        <h1>Mason's Hangman Game </h1>
-        <img
-          src={pics[Math.min(this.state.lifeLeft, pics.length - 1)]}
-          alt="Hangman"
-          className="hangman-image"
+      <div style={{ marginBottom: '20px' }}>
+        <input
+          type="text"
+          placeholder="Enter Name"
+          value={playerName}
+          onChange={(e) => setPlayerName(e.target.value)}
+          style={{
+            padding: '10px',
+            fontSize: '16px',
+            width: '200px',
+            borderRadius: '5px',
+            border: '2px solid #3498db',
+          }}
         />
-        <p className="word-display">{this.state.maskedWord.join(' ')}</p>
-        <p className="lives-left">Lives Left: {6 - this.state.lifeLeft}</p>
-
-        <SingleLetterSearchbar onSearch={this.handleGuess} />
-
-        <p>Guessed Letters: {this.state.usedLetters.join(', ')}</p>
-
-        {this.state.gameOver && (
-          <p className="game-over">
-            Game Over! The word was: {this.state.curWord}
-          </p>
-        )}
-        {this.state.gameWon && (
-          <p className="game-won">Congratulations! You won!</p>
-        )}
-
-        <h3>Incorrect Guesses:</h3>
-        <div className="incorrect-letters-container">
-          {this.state.wrongLetters.map((letter, index) => (
-            <LetterBox
-              key={index}
-              letter={letter}
-              isVisible={true}
-              boxStyle={{ backgroundColor: 'red' }}
-              letterStyle={{ color: 'white', fontSize: '30px' }}
-            />
-          ))}
-        </div>
-
-        <button onClick={this.startNewGame}>New Game</button>
       </div>
-    );
-  }
+
+      {playerName && (
+        <p style={{ fontSize: '18px', marginBottom: '10px' }}>
+          Welcome, {playerName}!
+        </p>
+      )}
+
+      <p className="word-display">{gameState.maskedWord.join(' ')}</p>
+      <p className="lives-left">Lives Left: {MAX_LIVES - gameState.lifeLeft}</p>
+
+      <SingleLetterSearchbar onSearch={handleGuess} />
+      <p>Guessed Letters: {gameState.usedLetters.join(', ')}</p>
+
+      {gameState.gameOver && (
+        <p className="game-over">
+          Game Over! The word was: {gameState.curWord}
+        </p>
+      )}
+      {gameState.gameWon && (
+        <p className="game-won">Congratulations! You won!</p>
+      )}
+
+      <h3>Incorrect Guesses:</h3>
+      <div className="incorrect-letters-container">
+        {gameState.wrongLetters.map((letter, index) => (
+          <LetterBox
+            key={index}
+            letter={letter}
+            isVisible={true}
+            boxStyle={{ backgroundColor: 'red' }}
+            letterStyle={{ color: 'white', fontSize: '30px' }}
+          />
+        ))}
+      </div>
+
+      <button onClick={startNewGame}>New Game</button>
+
+      <button
+        style={{ marginTop: '10px' }}
+        onClick={() => {
+          axios
+            .get(`http://localhost:5000/stats/${playerName}`)
+            .then((res) => {
+              const { winPercent, wins, losses } = res.data;
+              alert(
+                `Stats for ${playerName}:\nWins: ${wins}\nLosses: ${losses}\nWin %: ${winPercent}`
+              );
+            })
+            .catch((err) => {
+              console.error('Error fetching stats', err);
+              alert('Could not fetch stats.');
+            });
+        }}
+        disabled={!playerName}
+      >
+        Show My Stats
+      </button>
+    </div>
+  );
 }
 
 export default HangmanGame;
