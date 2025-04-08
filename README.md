@@ -84,7 +84,7 @@ This updated version includes several enhancements over the original Hangman app
 
 ## **Installation & Setup**
 
-1. Clone this repository:
+1. **Clone this repository**:
 
    ```sh
    git clone https://github.com/your-username/react-parent-child-demo.git
