@@ -17,6 +17,7 @@ This updated version includes several enhancements over the original Hangman app
 - Improved the user interface with a name input field and welcome message
 
 ---
+
 ---
 
 ## **Features**
@@ -35,6 +36,7 @@ This updated version includes several enhancements over the original Hangman app
   ✔️ Includes a **restart button** to start a new game
 
 ---
+
 ---
 
 ### **Files Overview**
@@ -51,6 +53,7 @@ This updated version includes several enhancements over the original Hangman app
 - **`index.html`** - The main HTML file for rendering the React app.
 
 ---
+
 ---
 
 ## **How It Works**
@@ -80,6 +83,7 @@ This updated version includes several enhancements over the original Hangman app
 - Updates dynamically as the user makes incorrect guesses.
 
 ---
+
 ---
 
 ## **Installation & Setup**
@@ -110,23 +114,52 @@ This updated version includes several enhancements over the original Hangman app
    ```
 
 5. **Open the Application**:
+
    ```bash
    The app will open automatically in your browser at http://localhost:3000
    If it doesnt, manually navigate to http://localhost:3000
    ```
 
+   ***
 
-   ---
-   ---
+   ***
+
+   ## Technical Requirements
+
+   ### Prerequisites
+
+   - Node.js (v14.0 or higher)
+   - npm (v6.0 or higher)
+   - Docker Desktop
+   - Modern web browser (Chrome, Firefox, Safari, Edge)
+
+   ### Supported Operating Systems
+
+   - Windows 10/11
+   - macOS 10.15 or later
+   - Linux (Ubuntu 18.04 or later)
+
+   ### Environment Variables
+
+   Create a `.env` file in the root directory:
+
+   ```bash
+   PORT=3000
+   MONGODB_URI=mongodb://mongo:27017/hangmanDB
+   ```
+
+---
+
+---
+
 ## Running Docker and MongoDB
 
 This project uses Docker Compose to run both the backend server and the MongoDB database in containers.
 
 ### Prerequisites
 
-- Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for Windows/Mac  
+- Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for Windows/Mac
 - Make sure Docker is running before you continue
-
 
 ### How to Start Docker Services
 
@@ -135,24 +168,27 @@ From the root of your project folder, run the following command:
 ```bash
 docker compose up --build
 ```
+
 - Builds and starts the backend server (Node.js + Express)
 - Pulls and starts a MongoDB container
 - Connects both services automatically via Docker
-The backend will run @http://localhost:5000
-MongoDB will be accessbile internally @mongodb://mongo:27017/hangmanDB
+  The backend will run @http://localhost:5000
+  MongoDB will be accessbile internally @mongodb://mongo:27017/hangmanDB
 
 ### How to Stop Docker Services
+
 To shut everything down, press Ctrl + C in the terminal, then run:
 
 ```bash
 docker compose down
 ```
+
 - This will stop and remove the containers, but keep your data in the mounted volume (mongo-data)
 
 ---
+
 ---
 
 ## Application Screenshot
+
 ![HCSC-418 Hangman Assignment](./hangman2.0Img.jpg)
-
-
